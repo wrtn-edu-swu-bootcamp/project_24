@@ -1,0 +1,289 @@
+.health-record {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.record-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.record-header h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.record-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.empty-state {
+  background: white;
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state svg {
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #666;
+}
+
+.record-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.record-list {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.record-list h3 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.record-wrapper {
+  margin-bottom: 1rem;
+}
+
+.record-item {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  border-left: 4px solid;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.record-item:hover {
+  transform: translateX(4px);
+  background: #f3f4f6;
+}
+
+.record-item.active {
+  background: #eff6ff;
+  border: 2px solid #2563eb;
+  border-left: 4px solid;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  transform: translateX(4px);
+}
+
+.record-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.record-date {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.record-symptoms {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.record-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-btn,
+.delete-btn {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  transition: all 0.3s;
+}
+
+.view-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.view-btn:hover {
+  background: #1e40af;
+}
+
+.delete-btn {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
+.record-summary {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.urgency-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.urgency-score {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.record-detail-desktop {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 2rem;
+}
+
+.record-detail-inline {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+  display: none;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.detail-header h3 {
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.close-btn:hover {
+  background: #f3f4f6;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-section h4 {
+  margin-bottom: 0.75rem;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.detail-section p,
+.detail-section ul {
+  color: #555;
+  line-height: 1.6;
+}
+
+.detail-section ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.detail-section li {
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.detail-section li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.result-item span:first-child {
+  font-weight: 600;
+  color: #666;
+}
+
+.result-item span:last-child {
+  font-weight: 600;
+  color: #333;
+}
+
+@media (max-width: 968px) {
+  .record-content {
+    grid-template-columns: 1fr;
+  }
+
+  .record-detail-desktop {
+    display: none;
+  }
+
+  .record-detail-inline {
+    display: block;
+  }
+}
