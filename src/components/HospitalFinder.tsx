@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Hospital } from '../types'
-import { getNearbyHospitals, getAvailableHospitals, userLocation } from '../utils/hospitalData'
+import { getNearbyHospitals, getAvailableHospitals } from '../utils/hospitalData'
 import { MapPin, Phone, Clock, AlertCircle, CheckCircle, XCircle } from 'lucide-react'
 import './HospitalFinder.css'
 

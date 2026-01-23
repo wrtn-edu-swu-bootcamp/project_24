@@ -5,7 +5,6 @@ import {
   FileText, 
   AlertCircle, 
   CheckCircle, 
-  Clock,
   Shield,
   ArrowRight,
   Heart,

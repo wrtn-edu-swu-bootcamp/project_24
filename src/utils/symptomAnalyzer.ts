@@ -42,7 +42,6 @@ export function analyzeSymptoms(symptoms: Symptom[]): SymptomCheckResult {
   // 증상별 점수 계산
   symptoms.forEach(symptom => {
     const severityWeight = symptom.severity / 10
-    const durationWeight = Math.min(symptom.duration / 24, 1) // 24시간 이상이면 최대값
 
     // 응급 증상 체크
     if (EMERGENCY_SYMPTOMS.some(es => symptom.name.includes(es))) {
