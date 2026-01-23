@@ -53,148 +53,6 @@ export default function ChatBot({ onClose, onAnalyze, onNavigate }: ChatBotProps
     inputRef.current?.focus()
   }, [])
 
-  const generateAIResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase()
-    const symptoms: string[] = []
-
-    // 증상 키워드 감지 (더 포괄적으로)
-    const symptomKeywords: { [key: string]: string[] } = {
-      '두통': ['두통', '머리 아픔', '머리가 아파', '두뇌', '머리', '두통이', '머리 아픈'],
-      '발열': ['열', '발열', '체온', '고열', '미열', '열이 나', '열이 있어', '뜨거워'],
-      '복통': ['배 아픔', '복통', '배가 아파', '속이 아파', '배', '복부', '배 아픈'],
-      '기침': ['기침', '콜록', '기침이 나', '기침이 있어', '기침해'],
-      '어지러움': ['어지러움', '어지러워', '현기증', '빙빙 도는', '어지러', '현기'],
-      '메스꺼움': ['메스꺼움', '토할 것 같', '구역질', '토', '구토', '메스'],
-      '호흡 곤란': ['숨이 차', '호흡', '숨쉬기', '가쁜', '숨', '호흡이', '숨이'],
-      '가슴 통증': ['가슴', '흉통', '가슴이 아파', '가슴 아픔', '흉부'],
-      '근육통': ['근육', '몸살', '뼈마디', '관절', '근육이 아파'],
-      '인후통': ['목', '인후', '목이 아파', '삼키기', '목 아픔', '인후통'],
-      '피로감': ['피로', '힘들', '지침', '무기력', '피곤', '쉽게 지쳐'],
-      '설사': ['설사', '배탈', '소화', '설사가', '변'],
-      '화상': ['화상', '데인', '데었', '뜨거운', '화끈', '타', '탔', '화끈거려', '데인 것', '데었어', '화상 입었'],
-      '염좌': ['염좌', '발목', '삐었', '삐었어', '삐어', '삐어진', '발목 삐었', '발목 삐어', '발목 삐었어', '발목 삐어진', '삐끗', '삐끗했', '삐끗했어', '삐끗한', '삐끗했어요', '발목 삐끗', '발목 삐끗했'],
-      '골절 의심': ['골절', '뼈', '부러', '부러진', '부러졌', '부러졌어', '뼈 부러', '뼈 부러진', '뼈 부러졌', '골절 의심', '뼈가', '뼈가 부러', '골절인 것 같', '골절 같']
-    }
-
-    // 감지된 증상 추출
-    Object.keys(symptomKeywords).forEach(symptom => {
-      if (symptomKeywords[symptom].some(keyword => lowerMessage.includes(keyword))) {
-        if (!symptoms.includes(symptom)) {
-          symptoms.push(symptom)
-        }
-      }
-    })
-
-    // 응급 상황 키워드
-    const emergencyKeywords = ['심한', '심하게', '극심한', '참을 수 없', '응급', '119', '구급차', '위급', '생명']
-    const isEmergency = emergencyKeywords.some(keyword => lowerMessage.includes(keyword))
-
-    // 응답 생성
-    if (isEmergency) {
-      return `🚨 응급 상황으로 보입니다. 즉시 119에 연락하거나 가까운 응급실을 방문하세요. 생명이 위급한 상황일 수 있습니다.
-
-현재 감지된 증상: ${symptoms.length > 0 ? symptoms.join(', ') : '설명하신 증상'}
-
-**즉시 조치:**
-• 119에 전화하거나 가까운 응급실 방문
-• 혼자 있지 말고 주변 사람에게 도움 요청
-• 가능하면 증상과 병력 정보를 준비
-
-응급실을 찾으시겠습니까?`
-    }
-
-    if (symptoms.length > 0) {
-      const symptomList = symptoms.join(', ')
-      // 외상 관련 증상이면 특별 안내
-      const hasTrauma = symptoms.some(s => ['화상', '염좌', '골절 의심'].includes(s))
-      if (hasTrauma) {
-        return `설명해주신 증상 "${symptomList}"을 감지했습니다. 외상 관련 증상이므로 즉시 응급 처치가 필요할 수 있습니다. 더 정확한 분석을 위해 아래 폼을 작성해주세요.`
-      }
-      return `설명해주신 증상 "${symptomList}"을 감지했습니다. 더 정확한 분석을 위해 아래 폼을 작성해주세요.`
-    }
-
-    // 일반적인 응답
-    if (lowerMessage.includes('안녕') || lowerMessage.includes('하이') || lowerMessage.includes('반가')) {
-      return '안녕하세요! 건강 상담을 도와드리겠습니다. 어떤 증상이 있으신지 자세히 설명해주세요. 예를 들어 "머리가 아프고 열이 나요"처럼 구체적으로 말씀해주시면 더 정확한 조언을 드릴 수 있습니다.'
-    }
-
-    if (lowerMessage.includes('감사') || lowerMessage.includes('고마')) {
-      return '천만에요! 건강하시길 바랍니다. 추가로 궁금한 점이 있으시면 언제든 말씀해주세요.'
-    }
-
-    if (lowerMessage.includes('분석') || lowerMessage.includes('체크') || lowerMessage.includes('진단')) {
-      return `증상을 분석해드리기 위해 더 구체적인 정보가 필요합니다. 다음 정보를 알려주시면 도움이 됩니다:
-
-• 어떤 증상이 있으신가요? (예: 두통, 발열, 복통 등)
-• 증상의 심각도는 어느 정도인가요? (1-10점)
-• 증상이 시작된 시기는 언제인가요?
-• 다른 동반 증상이 있으신가요?
-
-자세히 설명해주시면 더 정확한 조언을 드릴 수 있습니다.`
-    }
-
-    return `말씀해주신 내용을 바탕으로 다음과 같이 조언드립니다:
-
-**일반적인 권장사항:**
-• 충분한 휴식과 수분 섭취
-• 증상이 악화되거나 지속되면 병원 방문
-• 응급 상황 시 즉시 119에 연락
-
-**더 정확한 분석을 위해:**
-증상을 구체적으로 설명해주시면 더 정확한 조언을 드릴 수 있습니다. 예를 들어:
-• "머리가 아프고 열이 나요"
-• "배가 아프고 메스꺼워요"
-• "기침이 심하고 숨이 차요"
-• "손에 뜨거운 물을 데었어요" (화상)
-• "발목을 삐끗했어요" (염좌)
-• "팔이 부러진 것 같아요" (골절 의심)
-
-어떤 증상이 있으신가요?`
-  }
-
-  const getPossibleCauses = (symptoms: string[]): string => {
-    const causes: string[] = []
-    
-    if (symptoms.includes('두통')) {
-      causes.push('• 긴장성 두통, 편두통, 감기/독감')
-    }
-    if (symptoms.includes('발열')) {
-      causes.push('• 감기, 독감, 세균 감염')
-    }
-    if (symptoms.includes('복통')) {
-      causes.push('• 소화불량, 식중독, 위염, 장염')
-    }
-    if (symptoms.includes('기침')) {
-      causes.push('• 감기, 기관지염, 알레르기')
-    }
-    
-    return causes.length > 0 ? causes.join('\n') : '• 정확한 진단을 위해 병원 방문이 필요합니다.'
-  }
-
-  const getRecommendations = (symptoms: string[], message: string): string => {
-    const recommendations: string[] = []
-    
-    if (symptoms.includes('발열')) {
-      recommendations.push('• 충분한 수분 섭취와 휴식')
-      recommendations.push('• 체온을 정기적으로 확인')
-    }
-    if (symptoms.includes('복통')) {
-      recommendations.push('• 가벼운 음식 섭취')
-      recommendations.push('• 자극적인 음식 피하기')
-    }
-    if (symptoms.includes('기침')) {
-      recommendations.push('• 따뜻한 물 자주 마시기')
-      recommendations.push('• 실내 습도 유지')
-    }
-    
-    if (recommendations.length === 0) {
-      recommendations.push('• 충분한 휴식과 수분 섭취')
-      recommendations.push('• 증상이 악화되면 병원 방문')
-    }
-    
-    return recommendations.join('\n')
-  }
-
   const getSymptomCategory = (symptomName: string): string => {
     const categoryMap: { [key: string]: string } = {
       '두통': '신경계',
@@ -216,10 +74,95 @@ export default function ChatBot({ onClose, onAnalyze, onNavigate }: ChatBotProps
     return categoryMap[symptomName] || '기타'
   }
 
+  const generateLocalResponse = (userMessage: string): string => {
+    const lowerMessage = userMessage.toLowerCase()
+    const symptoms = extractSymptoms(userMessage)
+    
+    // 응급 상황 키워드 확인
+    const emergencyKeywords = ['심한', '심하게', '극심한', '참을 수 없', '응급', '119', '구급차', '위급', '생명']
+    const isEmergency = emergencyKeywords.some(keyword => lowerMessage.includes(keyword))
+    
+    // 응급 상황 응답
+    if (isEmergency) {
+      return `⚠️ 구글 AI 연결이 안되어 기본 조치 방법을 안내합니다.
+
+🚨 응급 상황으로 보입니다. 즉시 119에 연락하거나 가까운 응급실을 방문하세요.
+
+**즉시 조치:**
+• 119에 전화하거나 가까운 응급실 방문
+• 혼자 있지 말고 주변 사람에게 도움 요청
+• 가능하면 증상과 병력 정보를 준비
+
+**참고:** 더 정확한 분석을 위해서는 구글 AI 연결이 필요합니다.`
+    }
+    
+    // 증상이 감지된 경우
+    if (symptoms.length > 0) {
+      const symptomList = symptoms.join(', ')
+      const hasTrauma = symptoms.some(s => ['화상', '염좌', '골절 의심'].includes(s))
+      
+      let response = `⚠️ 구글 AI 연결이 안되어 기본 조치 방법을 안내합니다.\n\n`
+      
+      if (hasTrauma) {
+        response += `설명해주신 증상 "${symptomList}"을 감지했습니다. 외상 관련 증상이므로 즉시 응급 처치가 필요할 수 있습니다.\n\n`
+        response += `**기본 응급 처치:**\n`
+        if (symptoms.includes('화상')) {
+          response += `• 흐르는 찬물(15-20도)에 15-20분 정도 환부를 식혀주세요\n• 얼음을 직접 대지 마세요\n• 물집이 생겼다면 절대 터뜨리지 마세요\n`
+        }
+        if (symptoms.includes('염좌')) {
+          response += `• RICE 처치: 휴식(Rest), 얼음(Ice), 압박(Compression), 거상(Elevation)\n• 부상 부위를 움직이지 마세요\n`
+        }
+        if (symptoms.includes('골절 의심')) {
+          response += `• 부상 부위를 움직이지 마세요\n• 부목을 대거나 고정하세요\n• 즉시 병원 방문이 필요합니다\n`
+        }
+      } else {
+        response += `설명해주신 증상 "${symptomList}"을 감지했습니다.\n\n`
+        response += `**기본 조치 방법:**\n`
+        if (symptoms.includes('발열')) {
+          response += `• 충분한 수분 섭취와 휴식\n• 체온을 정기적으로 확인\n`
+        }
+        if (symptoms.includes('복통')) {
+          response += `• 가벼운 음식 섭취\n• 자극적인 음식 피하기\n`
+        }
+        if (symptoms.includes('기침')) {
+          response += `• 따뜻한 물 자주 마시기\n• 실내 습도 유지\n`
+        }
+        if (symptoms.includes('두통')) {
+          response += `• 충분한 휴식\n• 조용하고 어두운 곳에서 휴식\n`
+        }
+        if (response === `⚠️ 구글 AI 연결이 안되어 기본 조치 방법을 안내합니다.\n\n설명해주신 증상 "${symptomList}"을 감지했습니다.\n\n**기본 조치 방법:**\n`) {
+          response += `• 충분한 휴식과 수분 섭취\n• 증상이 악화되면 병원 방문\n`
+        }
+      }
+      
+      response += `\n**참고:** 더 정확한 분석을 위해서는 구글 AI 연결이 필요합니다.`
+      return response
+    }
+    
+    // 증상이 감지되지 않은 경우
+    return `⚠️ 구글 AI 연결이 안되어 기본 조치 방법을 안내합니다.
+
+말씀해주신 내용을 바탕으로 다음과 같이 조언드립니다:
+
+**일반적인 권장사항:**
+• 충분한 휴식과 수분 섭취
+• 증상이 악화되거나 지속되면 병원 방문
+• 응급 상황 시 즉시 119에 연락
+
+**더 정확한 분석을 위해:**
+증상을 구체적으로 설명해주시면 더 정확한 조언을 드릴 수 있습니다. 예를 들어:
+• "머리가 아프고 열이 나요"
+• "배가 아프고 메스꺼워요"
+• "손에 뜨거운 물을 데었어요" (화상)
+• "발목을 삐끗했어요" (염좌)
+
+**참고:** 더 정확한 분석을 위해서는 구글 AI 연결이 필요합니다.`
+  }
+
   const extractSymptoms = (message: string): string[] => {
     const symptoms: string[] = []
     const lowerMessage = message.toLowerCase()
-    // generateAIResponse와 동일한 키워드 사용
+    // Gemini 응답과 사용자 입력 모두에서 증상 키워드 감지
     const symptomKeywords: { [key: string]: string[] } = {
       '두통': ['두통', '머리 아픔', '머리가 아파', '두뇌', '머리', '두통이', '머리 아픈'],
       '발열': ['열', '발열', '체온', '고열', '미열', '열이 나', '열이 있어', '뜨거워'],
@@ -295,12 +238,20 @@ export default function ChatBot({ onClose, onAnalyze, onNavigate }: ChatBotProps
       // n8n을 통해 Gemini API 호출
       const aiResponseText = await callN8nChatbot(userInput, recentMessages)
       
-      const detectedSymptoms = extractSymptoms(userInput)
-      const lowerInput = userInput.toLowerCase()
+      // Gemini 응답과 사용자 입력 모두에서 증상 감지
+      const detectedSymptomsFromInput = extractSymptoms(userInput)
+      const detectedSymptomsFromResponse = extractSymptoms(aiResponseText)
+      // 중복 제거하여 합치기
+      const detectedSymptoms = Array.from(new Set([...detectedSymptomsFromInput, ...detectedSymptomsFromResponse]))
       
-      // 응급 상황 키워드 확인
+      const lowerInput = userInput.toLowerCase()
+      const lowerResponse = aiResponseText.toLowerCase()
+      
+      // 응급 상황 키워드 확인 (사용자 입력과 Gemini 응답 모두 확인)
       const emergencyKeywords = ['심한', '심하게', '극심한', '참을 수 없', '응급', '119', '구급차', '위급', '생명']
-      const isEmergency = emergencyKeywords.some(keyword => lowerInput.includes(keyword))
+      const isEmergency = emergencyKeywords.some(keyword => 
+        lowerInput.includes(keyword) || lowerResponse.includes(keyword)
+      )
       
       const messageId = (Date.now() + 1).toString()
       const aiResponse: Message = {
@@ -335,23 +286,28 @@ export default function ChatBot({ onClose, onAnalyze, onNavigate }: ChatBotProps
         }, 100)
       }
     } catch (error) {
-      // n8n API 호출 실패 시 기존 로직 사용 (폴백)
-      console.error('N8N API 호출 실패, 기존 로직 사용:', error)
+      // n8n/Gemini API 호출 실패 시 로컬 챗봇으로 폴백
+      console.error('N8N API 호출 실패, 로컬 챗봇으로 폴백:', error)
       
+      // 로컬 챗봇으로 응답 생성
+      const localResponseText = generateLocalResponse(userInput)
+      
+      // 로컬 응답에서 증상 감지
       const detectedSymptoms = extractSymptoms(userInput)
       const lowerInput = userInput.toLowerCase()
+      const lowerResponse = localResponseText.toLowerCase()
       
       // 응급 상황 키워드 확인
       const emergencyKeywords = ['심한', '심하게', '극심한', '참을 수 없', '응급', '119', '구급차', '위급', '생명']
-      const isEmergency = emergencyKeywords.some(keyword => lowerInput.includes(keyword))
-      
-      const responseContent = generateAIResponse(userInput)
+      const isEmergency = emergencyKeywords.some(keyword => 
+        lowerInput.includes(keyword) || lowerResponse.includes(keyword)
+      )
       
       const messageId = (Date.now() + 1).toString()
-      const aiResponse: Message = {
+      const localResponse: Message = {
         id: messageId,
         role: 'assistant',
-        content: responseContent,
+        content: localResponseText,
         timestamp: new Date(),
         // 응급 상황이 아니고 증상이 감지되었을 때만 폼 표시
         formData: !isEmergency && detectedSymptoms.length > 0 ? {
@@ -360,7 +316,7 @@ export default function ChatBot({ onClose, onAnalyze, onNavigate }: ChatBotProps
         } : undefined
       }
       
-      setMessages(prev => [...prev, aiResponse])
+      setMessages(prev => [...prev, localResponse])
       
       // 폼 데이터 초기화 (응급 상황이 아니고 증상이 감지되었을 때만)
       if (!isEmergency && detectedSymptoms.length > 0) {
